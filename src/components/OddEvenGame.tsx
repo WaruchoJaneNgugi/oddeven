@@ -11,8 +11,8 @@ const OddEvenGame: React.FC = () => {
     const [generatedNumber, setGeneratedNumber] = useState<number | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [countdown, setCountdown] = useState<number>(3);
-    const [streak, setStreak] = useState<number>(0);
-    const [bestStreak, setBestStreak] = useState<number>(0);
+    // const [streak, setStreak] = useState<number>(0);
+    // const [bestStreak, setBestStreak] = useState<number>(0);
     const countdownRef = useRef<number>(3);
 
     const generateRandomNumber = useCallback(() => {
@@ -22,21 +22,6 @@ const OddEvenGame: React.FC = () => {
     const checkOddEven = useCallback((num: number): Choice => {
         return num % 2 === 0 ? 'even' : 'odd';
     }, []);
-
-    const handleChoice = useCallback((choice: Choice) => {
-        setUserChoice(choice);
-        setGameStatus('countdown');
-        setCountdown(3);
-
-        // Clear any existing timeout
-        if (countdownRef.current) {
-            clearTimeout(countdownRef.current);
-        }
-
-        // Start countdown
-        countdownRef.current = window.setTimeout(() => handleCountdown(2), 1000);
-    }, []);
-
     const handleCountdown = useCallback((remaining: number) => {
         if (remaining > 0) {
             setCountdown(remaining);
@@ -61,20 +46,36 @@ const OddEvenGame: React.FC = () => {
 
                     if (correct) {
                         setScore(prev => prev + 1);
-                        setStreak(prev => {
-                            const newStreak = prev + 1;
-                            if (newStreak > bestStreak) {
-                                setBestStreak(newStreak);
-                            }
-                            return newStreak;
-                        });
-                    } else {
-                        setStreak(0);
+                    //     setStreak(prev => {
+                    //         const newStreak = prev + 1;
+                    //         if (newStreak > bestStreak) {
+                    //             setBestStreak(newStreak);
+                    //         }
+                    //         return newStreak;
+                    //     });
                     }
+                    // else {
+                    //     setStreak(0);
+                    // }
                 }, 500);
             }, 500);
         }
-    }, [generateRandomNumber, checkOddEven, userChoice, bestStreak]);
+    }, [generateRandomNumber, checkOddEven, userChoice]);
+
+    const handleChoice = useCallback((choice: Choice) => {
+        setUserChoice(choice);
+        setGameStatus('countdown');
+        setCountdown(3);
+
+        // Clear any existing timeout
+        if (countdownRef.current) {
+            clearTimeout(countdownRef.current);
+        }
+
+        // Start countdown
+        countdownRef.current = window.setTimeout(() => handleCountdown(2), 1000);
+    }, []);
+
 
     const startNewRound = useCallback(() => {
         setGameStatus('idle');
