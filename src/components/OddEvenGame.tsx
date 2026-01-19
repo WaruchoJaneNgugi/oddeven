@@ -13,7 +13,7 @@ const OddEvenGame: React.FC = () => {
     const [countdown, setCountdown] = useState<number>(3);
     const [streak, setStreak] = useState<number>(0);
     const [bestStreak, setBestStreak] = useState<number>(0);
-    const countdownRef = useRef<number>();
+    const countdownRef = useRef<number>(3);
 
     const generateRandomNumber = useCallback(() => {
         return Math.floor(Math.random() * 100) + 1;
