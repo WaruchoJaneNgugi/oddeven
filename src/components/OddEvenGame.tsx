@@ -81,20 +81,20 @@ const OddEvenGame: React.FC = () => {
         setUserChoice(null);
     }, []);
 
-    const resetGame = useCallback(() => {
-        // Clear any existing timeout
-        if (countdownRef.current) {
-            clearTimeout(countdownRef.current);
-        }
-
-        setScore(0);
-        setStreak(0);
-        setUserChoice(null);
-        setGeneratedNumber(null);
-        setIsCorrect(null);
-        setGameStatus('idle');
-        setCountdown(3);
-    }, []);
+    // const resetGame = useCallback(() => {
+    //     // Clear any existing timeout
+    //     if (countdownRef.current) {
+    //         clearTimeout(countdownRef.current);
+    //     }
+    //
+    //     setScore(0);
+    //     setStreak(0);
+    //     setUserChoice(null);
+    //     setGeneratedNumber(null);
+    //     setIsCorrect(null);
+    //     setGameStatus('idle');
+    //     setCountdown(3);
+    // }, []);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -117,14 +117,14 @@ const OddEvenGame: React.FC = () => {
                     <span className="stat-label">Score</span>
                     <span className="stat-value">{score}</span>
                 </div>
-                <div className="stat-card">
-                    <span className="stat-label">Current Streak</span>
-                    <span className="stat-value streak-value">{streak}</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-label">Best Streak</span>
-                    <span className="stat-value best-streak">{bestStreak}</span>
-                </div>
+                {/*<div className="stat-card">*/}
+                {/*    <span className="stat-label">Current Streak</span>*/}
+                {/*    <span className="stat-value streak-value">{streak}</span>*/}
+                {/*</div>*/}
+                {/*<div className="stat-card">*/}
+                {/*    <span className="stat-label">Best Streak</span>*/}
+                {/*    <span className="stat-value best-streak">{bestStreak}</span>*/}
+                {/*</div>*/}
             </div>
 
             {gameStatus === 'idle' && (
@@ -194,12 +194,7 @@ const OddEvenGame: React.FC = () => {
                             >
                                 Play Again
                             </button>
-                            <button
-                                className="reset-btn"
-                                onClick={resetGame}
-                            >
-                                Reset Game
-                            </button>
+
                         </div>
                     </div>
                 </div>
