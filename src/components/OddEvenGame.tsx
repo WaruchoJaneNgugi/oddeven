@@ -11,9 +11,7 @@ const OddEvenGame: React.FC = () => {
     const [generatedNumber, setGeneratedNumber] = useState<number | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [countdown, setCountdown] = useState<number>(3);
-    // const [streak, setStreak] = useState<number>(0);
-    // const [bestStreak, setBestStreak] = useState<number>(0);
-    const countdownRef = useRef<number>(3);
+    const timerRef = useRef<number>(3);
 
     const generateRandomNumber = useCallback(() => {
         return Math.floor(Math.random() * 100) + 1;
@@ -22,45 +20,6 @@ const OddEvenGame: React.FC = () => {
     const checkOddEven = useCallback((num: number): Choice => {
         return num % 2 === 0 ? 'even' : 'odd';
     }, []);
-    const handleCountdown = useCallback((remaining: number) => {
-        if (remaining > 0) {
-            setCountdown(remaining);
-            countdownRef.current = window.setTimeout(() => handleCountdown(remaining - 1), 1000);
-        } else {
-            setCountdown(0);
-            // Move to waiting state after a brief pause
-            countdownRef.current = window.setTimeout(() => {
-                setGameStatus('waiting');
-                setGeneratedNumber(null);
-                setIsCorrect(null);
-
-                // Generate number after waiting state
-                countdownRef.current = window.setTimeout(() => {
-                    const number = generateRandomNumber();
-                    const correctAnswer = checkOddEven(number);
-                    const correct = userChoice === correctAnswer;
-
-                    setGeneratedNumber(number);
-                    setIsCorrect(correct);
-                    setGameStatus('result');
-
-                    if (correct) {
-                        setScore(prev => prev + 1);
-                    //     setStreak(prev => {
-                    //         const newStreak = prev + 1;
-                    //         if (newStreak > bestStreak) {
-                    //             setBestStreak(newStreak);
-                    //         }
-                    //         return newStreak;
-                    //     });
-                    }
-                    // else {
-                    //     setStreak(0);
-                    // }
-                }, 500);
-            }, 500);
-        }
-    }, [generateRandomNumber, checkOddEven, userChoice]);
 
     const handleChoice = useCallback((choice: Choice) => {
         setUserChoice(choice);
@@ -68,28 +27,56 @@ const OddEvenGame: React.FC = () => {
         setCountdown(3);
 
         // Clear any existing timeout
-        if (countdownRef.current) {
-            clearTimeout(countdownRef.current);
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
         }
 
-        // Start countdown
-        countdownRef.current = window.setTimeout(() => handleCountdown(2), 1000);
-    }, []);
+        // Start countdown - capture the current choice
+        const startCountdown = (remaining: number, currentChoice: Choice) => {
+            if (remaining > 0) {
+                setCountdown(remaining);
+                timerRef.current = window.setTimeout(() => startCountdown(remaining - 1, currentChoice), 1000);
+            } else {
+                setCountdown(0);
+                // Move to waiting state after a brief pause
+                timerRef.current = window.setTimeout(() => {
+                    setGameStatus('waiting');
+                    setGeneratedNumber(null);
+                    setIsCorrect(null);
 
+                    // Generate number after waiting state
+                    timerRef.current = window.setTimeout(() => {
+                        const number = generateRandomNumber();
+                        const correctAnswer = checkOddEven(number);
+                        const correct = currentChoice === correctAnswer;
+
+                        setGeneratedNumber(number);
+                        setIsCorrect(correct);
+                        setGameStatus('result');
+
+                        if (correct) {
+                            setScore(prev => prev + 1);
+                        }
+                    }, 500);
+                }, 500);
+            }
+        };
+
+        // Start countdown with the current choice
+        timerRef.current = window.setTimeout(() => startCountdown(2, choice), 1000);
+    }, [generateRandomNumber, checkOddEven]);
 
     const startNewRound = useCallback(() => {
         setGameStatus('idle');
         setUserChoice(null);
+        setCountdown(3);
     }, []);
 
     // const resetGame = useCallback(() => {
-    //     // Clear any existing timeout
-    //     if (countdownRef.current) {
-    //         clearTimeout(countdownRef.current);
+    //     if (timerRef.current) {
+    //         clearTimeout(timerRef.current);
     //     }
-    //
     //     setScore(0);
-    //     setStreak(0);
     //     setUserChoice(null);
     //     setGeneratedNumber(null);
     //     setIsCorrect(null);
@@ -100,8 +87,8 @@ const OddEvenGame: React.FC = () => {
     // Cleanup on unmount
     useEffect(() => {
         return () => {
-            if (countdownRef.current) {
-                clearTimeout(countdownRef.current);
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
             }
         };
     }, []);
@@ -115,17 +102,9 @@ const OddEvenGame: React.FC = () => {
 
             <div className="game-stats">
                 <div className="stat-card">
-                    <span className="stat-label">Score</span>
+                    <span className="stat-label">Points</span>
                     <span className="stat-value">{score}</span>
                 </div>
-                {/*<div className="stat-card">*/}
-                {/*    <span className="stat-label">Current Streak</span>*/}
-                {/*    <span className="stat-value streak-value">{streak}</span>*/}
-                {/*</div>*/}
-                {/*<div className="stat-card">*/}
-                {/*    <span className="stat-label">Best Streak</span>*/}
-                {/*    <span className="stat-value best-streak">{bestStreak}</span>*/}
-                {/*</div>*/}
             </div>
 
             {gameStatus === 'idle' && (
@@ -137,14 +116,12 @@ const OddEvenGame: React.FC = () => {
                             className="choice-btn odd-btn"
                             onClick={() => handleChoice('odd')}
                         >
-                            {/*<span className="choice-icon">🔢</span>*/}
                             <span className="choice-text">Odd</span>
                         </div>
                         <div
                             className="choice-btn even-btn"
                             onClick={() => handleChoice('even')}
                         >
-                            {/*<span className="choice-icon">⚡</span>*/}
                             <span className="choice-text">Even</span>
                         </div>
                     </div>
@@ -195,7 +172,12 @@ const OddEvenGame: React.FC = () => {
                             >
                                 Play Again
                             </button>
-
+                            {/*<button*/}
+                            {/*    className="reset-btn"*/}
+                            {/*    onClick={resetGame}*/}
+                            {/*>*/}
+                            {/*    Reset Game*/}
+                            {/*</button>*/}
                         </div>
                     </div>
                 </div>
