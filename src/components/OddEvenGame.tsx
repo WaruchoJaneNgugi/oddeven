@@ -82,7 +82,7 @@ const OddEvenGame: React.FC = () => {
     //     setIsCorrect(null);
     //     setGameStatus('idle');
     //     setCountdown(3);
-    // }, []);
+    // }, []);game-subtitle
 
     // Cleanup on unmount
     useEffect(() => {
@@ -110,7 +110,7 @@ const OddEvenGame: React.FC = () => {
             {gameStatus === 'idle' && (
                 <div className="choice-screen">
                     <h2 className="choice-title">Pick Your Choice</h2>
-                    <p className="choice-subtitle">Fast and casual - just pick Odd or Even!</p>
+                    <p className="choice-subtitle">Just pick Odd or Even!</p>
                     <div className="choice-buttons">
                         <div
                             className="choice-btn odd-btn"
@@ -189,17 +189,7 @@ const OddEvenGame: React.FC = () => {
                     <li>Choose Odd or Even</li>
                     <li>System generates a random number (1-100)</li>
                     <li>Correct guess = +1 point</li>
-                    <li>Build streaks for higher scores!</li>
                 </ul>
-            </div>
-
-            <div className="theme-toggle">
-                <div className="theme-dots">
-                    <div className="theme-dot primary"></div>
-                    <div className="theme-dot secondary"></div>
-                    <div className="theme-dot accent"></div>
-                </div>
-                <span className="theme-label">Modern Theme</span>
             </div>
         </div>
     );
